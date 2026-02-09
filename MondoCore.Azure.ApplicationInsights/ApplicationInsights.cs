@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                          
  *    Creation Date: 29 Nov 2015                                            
  *                                                                          
- *   Copyright (c) 2015-2024 - Jim Lightfoot, All rights reserved           
+ *   Copyright (c) 2015-2026 - Jim Lightfoot, All rights reserved           
  *                                                                          
  *  Licensed under the MIT license:                                         
  *    http://www.opensource.org/licenses/mit-license.php                    
@@ -18,14 +18,16 @@
  ****************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.ApplicationInsights.Extensibility.Implementation;
+
 using MondoCore.Collections;
 using MondoCore.Log;
 
@@ -142,9 +144,6 @@ namespace MondoCore.Azure.ApplicationInsights
                         if(availability.Properties != null)
                             tel.Properties.Append(availability.Properties.ToReadOnlyStringDictionary());
 
-                        if(availability.Metrics != null)
-                            tel.Metrics.Append(availability.Metrics);
-
                         tel.AppendProperties(telemetry, _childrenAsJson);
 
                         SetAttributes(telemetry, tel, tel);
@@ -158,7 +157,7 @@ namespace MondoCore.Azure.ApplicationInsights
                 }
             }
 
-            _client.Flush();
+            await _client.FlushAsync(CancellationToken.None);
 
             return;
         }
@@ -170,13 +169,13 @@ namespace MondoCore.Azure.ApplicationInsights
         }
 
         /*************************************************************************/
-        public IRequestLog NewRequest(string operationName = null, string correlationId = null, object? properties = null)
+        public IRequestLog NewRequest(string? operationName = null, string? correlationId = null, object? properties = null)
         {
             if(string.IsNullOrWhiteSpace(operationName))
                 operationName = _client.Context.Operation.Name;
 
-            if(string.IsNullOrWhiteSpace(correlationId))
-                correlationId = _client.Context.Operation.Id;
+            if(string.IsNullOrWhiteSpace(correlationId) && Activity.Current?.Id != null)
+                correlationId = Activity.Current!.Id;
 
             IRequestLog request = new RequestLog(this, operationName, correlationId);
 
@@ -193,7 +192,6 @@ namespace MondoCore.Azure.ApplicationInsights
         {
             if(!string.IsNullOrWhiteSpace(telemetry.CorrelationId))
             { 
-                aiTelemetry.Context.Operation.Id = telemetry.CorrelationId;
                 aiTelemetry.Context.Operation.Name = telemetry.OperationName;
             }
         }
@@ -202,21 +200,32 @@ namespace MondoCore.Azure.ApplicationInsights
         /*************************************************************************/
         private class Operation : IDisposable
         {
-            private readonly IOperationHolder<RequestTelemetry> _op;
+            private readonly IOperationHolder<RequestTelemetry>? _op;
             private readonly TelemetryClient _client;
 
             /*************************************************************************/
             internal Operation(TelemetryClient client, string operationName)
             {
                 _client = client;
-                _op = client.StartOperation<RequestTelemetry>(operationName);
+
+                try
+                { 
+                    _op = client.StartOperation<RequestTelemetry>(operationName);
+                }
+                catch
+                {
+
+                }
             }
 
             /*************************************************************************/
             public void Dispose()
             {
-                _client.StopOperation(_op);
-                _op.Dispose();
+                if(_op != null)
+                { 
+                    _client.StopOperation(_op);
+                    _op?.Dispose();
+                }
             }
         }
 
