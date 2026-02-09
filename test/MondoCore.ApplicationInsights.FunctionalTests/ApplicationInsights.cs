@@ -159,7 +159,7 @@ namespace MondoCore.ApplicationInsights.FunctionalTests
 
     internal class Configuration
     {
-        public string InstrumentationKey        { get; set; } 
+        public string InstrumentationKey        { get; set; } = ""; 
         public string ConnectionString          { get; set; }
         public string DataLakeConnectionString  { get; set; }
         public string ConfigConnectionString    { get; set; }
