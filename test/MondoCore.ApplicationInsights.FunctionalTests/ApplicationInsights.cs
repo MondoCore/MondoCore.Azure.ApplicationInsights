@@ -39,6 +39,22 @@ namespace MondoCore.ApplicationInsights.FunctionalTests
         }
 
         [TestMethod]
+        public async Task ApplicationInsights_WriteDebug()
+        {
+            var log = CreateAppInsights();
+             
+            await log.WriteDebug("Debug Event", properties: new { Make = "Chevy", Model = "Camaro", Year = 1969 }, correlationId: _correlationId);
+        }
+
+        [TestMethod]
+        public async Task ApplicationInsights_WriteTest()
+        {
+            var log = CreateAppInsights();
+             
+            await log.WriteTest("Test Test Event", properties: new { Make = "Chevy", Model = "Camaro", Year = 1969 }, correlationId: _correlationId);
+        }
+
+        [TestMethod]
         public async Task ApplicationInsights_WriteError()
         {
             using(var log = SetupRequest("WriteError", true))

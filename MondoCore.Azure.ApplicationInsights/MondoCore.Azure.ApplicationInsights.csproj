@@ -10,7 +10,7 @@
     <Description>Implementation of ILog interface for Application Insights</Description>
     <Copyright>© Jim Lightfoot, All Rights Reserved</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <Title>MondoCore.Azure.ApplicationInsights</Title>
     <PackageReleaseNotes>Update packages. Upgrade to .Net 8</PackageReleaseNotes>
     <PackageTags>application insights;logging;logger</PackageTags>
@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights" Version="3.0.0" />
-    <PackageReference Include="MondoCore.Log" Version="2.3.1" />
+    <PackageReference Include="MondoCore.Log" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,10 +33,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\MondoCore.Log\MondoCore.Log\MondoCore.Log.csproj" />
   </ItemGroup>
 
 </Project>
