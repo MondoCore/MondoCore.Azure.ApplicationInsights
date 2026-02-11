@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights" Version="3.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageReference Include="MondoCore.Log" Version="2.3.1" />
+    <PackageReference Include="MondoCore.Log" Version="2.4.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="4.1.0" />
     <PackageReference Include="MSTest.TestFramework" Version="4.1.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">

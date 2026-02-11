@@ -70,10 +70,14 @@ namespace MondoCore.Azure.ApplicationInsights
                 }
 
                 case Telemetry.TelemetryType.Event:
+                case Telemetry.TelemetryType.Debug:
+                case Telemetry.TelemetryType.Test:
                 { 
                     var tel = new EventTelemetry(telemetry.Message);
 
                     tel.AppendProperties(telemetry, _childrenAsJson);
+
+                    tel.Properties.Add("EventType", telemetry.Type.ToString());
 
                     SetAttributes(telemetry, tel, tel);
 
