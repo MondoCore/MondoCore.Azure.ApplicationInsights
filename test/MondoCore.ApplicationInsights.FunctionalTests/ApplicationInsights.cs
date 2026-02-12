@@ -106,6 +106,15 @@ namespace MondoCore.ApplicationInsights.FunctionalTests
         }
 
         [TestMethod]
+        public async Task ApplicationInsights_WriteMetric()
+        {
+            using(var log = SetupRequest("WriteMetric", true))
+            { 
+                 await log.WriteMetric("John's hair length", 42d, properties: new {Make = "Chevy", Model = "Corvette" });
+            }
+        }
+
+        [TestMethod]
         public async Task ApplicationInsights_WriteError_lowercase()
         {
             using(var log = SetupRequest("WriteError_lowercase", true))

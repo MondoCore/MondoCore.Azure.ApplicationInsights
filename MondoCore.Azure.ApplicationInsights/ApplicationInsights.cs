@@ -194,9 +194,10 @@ namespace MondoCore.Azure.ApplicationInsights
         /*************************************************************************/
         private static void SetAttributes(Telemetry telemetry, ITelemetry aiTelemetry, ISupportProperties properties)
         {
-            if(!string.IsNullOrWhiteSpace(telemetry.CorrelationId))
+            if(!string.IsNullOrWhiteSpace(telemetry.OperationName))
             { 
-                aiTelemetry.Context.Operation.Name = telemetry.OperationName;
+                if(aiTelemetry.Context?.Operation != null) 
+                    aiTelemetry.Context.Operation.Name = telemetry.OperationName;
             }
         }
 
